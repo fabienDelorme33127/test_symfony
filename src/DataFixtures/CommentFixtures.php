@@ -11,16 +11,17 @@ class CommentFixtures extends Fixture
     public function load(ObjectManager $manager)
     {
         
-
-        for($i = 1; $i <= 10; $i++){
-            $comment = new Comment();
-            $comment->setContenu("ceci est le contenu du commentaire");
-            $comment->setAuthor("fabien");
-            $comment->setDateComment(new \Datetime());
-            $comment->setArticle($this->getReference('article-1'));
-
-            $manager->persist($comment);
-        }
+        for($a = 1; $a <= 5; $a++){
+            for($i = 1; $i <= 10; $i++){
+                $comment = new Comment();
+                $comment->setContenu("ceci est le commentaire n°".$a);
+                $comment->setAuthor("fabien");
+                $comment->setDateComment(new \Datetime());
+                $comment->setArticle($this->getReference('article-'.$i));
+    
+                $manager->persist($comment);
+            }
+        }        
         
         $manager->flush();
     }
