@@ -6,20 +6,20 @@
 
 {% block body %}
 
-    {% include 'menu/_menu.html.twig' %}
-
     <h1>{{ article.titre }}</h1>
     <p>{{ article.dateCreation|date('d/m/Y') }}</p>
     <p>{{ article.contenu }}</p>
 
-    <h2>Commentaires</h2>
-    <div class="raw">
-    {% for comment in article.comments %}
-        <div class="col-md-12">
-            <small>Le {{ comment.dateComment|date('d/m/Y') }} par {{ comment.author }}</small>
-            <p>{{ comment.contenu }}</p>
+    {% if article.comments is not empty %}
+        <h2>Commentaires</h2>
+        <div class="raw">
+        {% for comment in article.comments %}
+            <div class="col-md-12">
+                <small>Le {{ comment.dateComment|date('d/m/Y') }} par {{ comment.author }}</small>
+                <p>{{ comment.contenu }}</p>
+            </div>
+        {% endfor %}
         </div>
-    {% endfor %}
-    </div>
+    {% endif %}
 
 {% endblock %}

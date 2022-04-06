@@ -3,15 +3,18 @@
 namespace App\Controller;
 
 use App\Entity\Article;
-use App\Repository\ArticleRepository;
+use App\Entity\Category;
 use Doctrine\DBAL\Types\TextType;
+use App\Repository\ArticleRepository;
+use App\Repository\CategoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\Extension\Core\Type\TextType as TypeTextType;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\TextType as TypeTextType;
 
 class DefaultController extends AbstractController
 {
@@ -46,7 +49,7 @@ class DefaultController extends AbstractController
     /**
      * @Route("/article/ajouter", name="ajout_article")
      */
-    public function ajouter(EntityManagerInterface $manager){
+    public function ajouter(Request $request, CategoryRepository $categoryRepository, Entitymanagerinterface $manager){
 
         $form = $this->createFormBuilder()
         ->add('titre', TypeTextType::class, [
@@ -54,9 +57,29 @@ class DefaultController extends AbstractController
         ])
         ->add('contenu', TextareaType::class)
         ->add('dateCreation', DateType::class, [
-            'widget' => 'choice',
-            'input'  => 'datetime'
+            'widget' => 'single_text'
         ])->getForm();
+
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+
+            $article = new Article();
+            $article->setTitre($form->get('titre')->getdata());
+            $article->setContenu($form->get('contenu')->getdata());
+            $article->setDateCreation($form->get('dateCreation')->getdata());
+
+            $category = $categoryRepository->findOneBy([
+                'name' => 'sport'
+            ]);
+            $article->addCategory($category);
+            
+            $manager->persist($article);
+            $manager->flush();
+
+            return $this->redirectToRoute('liste_articles');
+        }
+
 
         return $this->render('default/ajout.html.twig', [
             'form' => $form->createView()
