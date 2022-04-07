@@ -13,13 +13,34 @@
     {% if article.comments is not empty %}
         <h2>Commentaires</h2>
         <div class="raw">
-        {% for comment in article.comments %}
-            <div class="col-md-12">
-                <small>Le {{ comment.dateComment|date('d/m/Y') }} par {{ comment.author }}</small>
-                <p>{{ comment.contenu }}</p>
-            </div>
-        {% endfor %}
+            {% for comment in article.comments %}
+                <div class="col-md-12">
+                    <small>Le {{ comment.dateComment|date('d/m/Y') }} par {{ comment.author }}</small>
+                    <p>{{ comment.contenu }}</p>
+                </div>
+            {% endfor %}
         </div>
     {% endif %}
+
+    <div class="raw">
+        {{ form_start(form) }}
+            <div class="form-group">
+                {{ form_label(form.contenu, null, {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.contenu, {'attr': {'class': 'form-control'}}) }}
+            </div>
+            <div class="form-group">
+                {{ form_label(form.author, null, {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.author, {'attr': {'class': 'form-control'}}) }}
+            </div>
+            <div class="form-group">
+                {{ form_label(form.condition, null, {'label_attr': {'class': 'form-check-label'}}) }}
+                {{ form_widget(form.condition, {'attr': {'class': 'form-check-input'}}) }}
+            </div>
+            <div class="form-group"></div>
+                {{ form_rest(form) }}
+                <button type="submit" class="btn btn-success">Enregistrer</button>
+            </div>
+        {{ form_end(form) }}
+    </div>
 
 {% endblock %}

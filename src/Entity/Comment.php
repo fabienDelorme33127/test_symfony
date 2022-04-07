@@ -90,4 +90,9 @@ class Comment
 
         return $this;
     }
+
+    public function __construct()
+    {
+        $this->dateComment = new \DateTime();
+    }
 }

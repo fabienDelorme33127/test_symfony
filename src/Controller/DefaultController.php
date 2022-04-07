@@ -3,7 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\Article;
+use App\Entity\Comment;
 use App\Entity\Category;
+use App\Form\ArticleType;
+use App\Form\CommentType;
+use Psr\Log\LoggerInterface;
 use Doctrine\DBAL\Types\TextType;
 use App\Repository\ArticleRepository;
 use App\Repository\CategoryRepository;
@@ -36,50 +40,50 @@ class DefaultController extends AbstractController
     }
 
      /**
-      * @Route("/{id}", name="vue_article", requirements={"id"="\d+"}, methods={"GET"})
+      * @Route("/{id}", name="vue_article", requirements={"id"="\d+"}, methods={"GET", "POST"})
       */
-    public function vueArticle(ArticleRepository $articleRepository, $id){
+    public function vueArticle(Article $article, Request $request, EntityManagerInterface $manager){
 
-        $article =  $articleRepository->find($id);
+        $comment = new Comment();
+        $comment->setArticle($article);
+        $form = $this->createForm(CommentType::class, $comment);
+
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+
+            $manager->persist($comment);
+            $manager->flush();
+            
+            return $this->redirectToRoute('vue_article', [
+                'id' => $article->getId()
+            ]);
+        }
+        
         return $this->render('default/vue.html.twig', [
             'article' => $article,
+            'form' => $form->createView()
         ]);
     }
 
     /**
      * @Route("/article/ajouter", name="ajout_article")
      */
-    public function ajouter(Request $request, CategoryRepository $categoryRepository, Entitymanagerinterface $manager){
+    public function ajouter(Request $request, Entitymanagerinterface $manager, LoggerInterface $logger){
 
-        $form = $this->createFormBuilder()
-        ->add('titre', TypeTextType::class, [
-            'label' => "Titre de l'article"
-        ])
-        ->add('contenu', TextareaType::class)
-        ->add('dateCreation', DateType::class, [
-            'widget' => 'single_text'
-        ])->getForm();
+        $logger->info("nous sommes dans le logger");
+
+        $article = new Article();
+        $form = $this->createForm(ArticleType::class, $article);
 
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
 
-            $article = new Article();
-            $article->setTitre($form->get('titre')->getdata());
-            $article->setContenu($form->get('contenu')->getdata());
-            $article->setDateCreation($form->get('dateCreation')->getdata());
-
-            $category = $categoryRepository->findOneBy([
-                'name' => 'sport'
-            ]);
-            $article->addCategory($category);
-            
             $manager->persist($article);
             $manager->flush();
-
             return $this->redirectToRoute('liste_articles');
         }
-
 
         return $this->render('default/ajout.html.twig', [
             'form' => $form->createView()
