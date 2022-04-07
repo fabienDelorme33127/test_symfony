@@ -8,17 +8,14 @@ use App\Entity\Category;
 use App\Form\ArticleType;
 use App\Form\CommentType;
 use Psr\Log\LoggerInterface;
-use Doctrine\DBAL\Types\TextType;
 use App\Repository\ArticleRepository;
-use App\Repository\CategoryRepository;
+use App\Service\VerificationComment;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\TextType as TypeTextType;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 
 class DefaultController extends AbstractController
 {
@@ -42,8 +39,8 @@ class DefaultController extends AbstractController
      /**
       * @Route("/{id}", name="vue_article", requirements={"id"="\d+"}, methods={"GET", "POST"})
       */
-    public function vueArticle(Article $article, Request $request, EntityManagerInterface $manager){
-
+    public function vueArticle(Article $article, Request $request, EntityManagerInterface $manager, VerificationComment $verifService, FlashBagInterface $session){
+   
         $comment = new Comment();
         $comment->setArticle($article);
         $form = $this->createForm(CommentType::class, $comment);
@@ -51,13 +48,15 @@ class DefaultController extends AbstractController
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
-
-            $manager->persist($comment);
-            $manager->flush();
             
-            return $this->redirectToRoute('vue_article', [
-                'id' => $article->getId()
-            ]);
+            if($verifService->commentaireNonAutorise($comment) === false){
+                $manager->persist($comment);
+                $manager->flush();
+                
+                return $this->redirectToRoute('vue_article', ['id' => $article->getId()]);
+            }else{
+                $session->add("danger", "Le commentaire contient un mot interdit");
+            }
         }
         
         return $this->render('default/vue.html.twig', [

@@ -22,6 +22,14 @@
         </div>
     {% endif %}
 
+    {% for label, messages in app.flashes(['warning', 'danger']) %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+
     <div class="raw">
         {{ form_start(form) }}
             <div class="form-group">
