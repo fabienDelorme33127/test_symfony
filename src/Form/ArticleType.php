@@ -33,7 +33,7 @@ class ArticleType extends AbstractType
                 'label' => 'Enregistrer en brouillon'
             ])
             ->add('publier', SubmitType::class, [
-                'label' => 'Publier'
+                'label' => 'A publier'
             ])
         ;
     }

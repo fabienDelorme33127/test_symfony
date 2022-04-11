@@ -84,7 +84,7 @@ class DefaultController extends AbstractController
             if($form->get('brouillon')->isClicked()){
                 $article->setState('brouillon');
             }else{
-                $article->setState('publie');
+                $article->setState('a publier');
             }
 
             if($article->getId() === null){
