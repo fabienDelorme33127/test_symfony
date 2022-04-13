@@ -1,0 +1,60 @@
+button a.card-link{
+        color: white;
+        text-decoration: none;
+}
+.card{
+        flex-direction: row;
+        border: 0;
+        flex-wrap: wrap;
+}
+.card-body {
+        border: 1px solid lightblue;
+        width: calc((100%/3) - 20px);
+        flex: inherit;
+        box-sizing: border-box;
+        margin: 10px;
+        height: 300px;
+        border-radius: 3px;
+}
+p.card-text{
+        overflow: hidden;
+        height: 168px;
+        margin: 0;
+        margin-bottom: 8px;
+}
+
+nav{
+        background-color: darkmagenta;
+}
+.navbar-light .navbar-brand,
+.navbar-light .navbar-nav .nav-link{
+        color: white;
+}
+.navbar-light .navbar-nav .active .nav-link {
+        color: deepskyblue;
+}
+
+
+.container {
+        margin-top: 10px;
+}
+
+.commentBox{
+        border: 1px solid lightgray;
+        border-radius: 3px;
+        padding: 0.5rem;
+        margin-bottom: 20px;
+}
+
+.btn-success, .btn-primary {
+        margin-top: 5px;
+}
+
+.formLogin{
+        max-width: 45%;
+        margin: auto;
+}
+
+textarea#article_contenu{
+        height: 250px;
+}

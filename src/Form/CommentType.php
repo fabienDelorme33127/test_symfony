@@ -14,14 +14,20 @@ class CommentType extends AbstractType
     {
         $builder
             ->add('contenu', null, [
-                'label' => 'Votre commentaire'
+                'label' => 'Votre commentaire',
+                'attr' => [
+                    'placeholder' => "Votre commentaire"
+                ]
             ])
             ->add('author', null, [
-                'label' => 'Votre nom'
+                'label' => 'Votre nom',
+                'attr' => [
+                    'placeholder' => "Votre nom"
+                ]
             ])
             ->add('condition', CheckboxType::class, [
                 'mapped' => false,
-                'label' => 'CGV'
+                'label' => 'Accepter les conditions'
             ])
         ;
     }

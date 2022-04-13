@@ -4,12 +4,9 @@ namespace App\Controller;
 
 use App\Entity\Article;
 use App\Entity\Comment;
-use App\Entity\Category;
-use App\Form\ArticleType;
 use App\Form\CommentType;
-use Psr\Log\LoggerInterface;
-use App\Repository\ArticleRepository;
 use App\Service\VerificationComment;
+use App\Repository\ArticleRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,11 +20,11 @@ class DefaultController extends AbstractController
      * @Route("/", name="liste_articles", methods={"GET"})
      */
     public function listeArticles(ArticleRepository $articleRepository): Response{
-
+ 
         $articles =  $articleRepository->findBy([
             'state' => 'publie'
         ]);
-
+                
         return $this->render('default/index.html.twig', [
             'articles' => $articles,
             'brouillon' => false
@@ -60,56 +57,6 @@ class DefaultController extends AbstractController
         return $this->render('default/vue.html.twig', [
             'article' => $article,
             'form' => $form->createView()
-        ]);
-    }
-
-    /**
-     * @Route("/article/ajouter", name="ajout_article")
-     * @Route("/article/{id}/edition", name="edition_article", requirements={"id"="\d+"}, methods={"GET", "POST"})
-     */
-    public function ajouter(Article $article = null, Request $request, Entitymanagerinterface $manager, LoggerInterface $logger){
-
-        if($article === null){
-            $article = new Article();
-        }
-
-        $logger->info("nous sommes dans le logger");
-
-        $form = $this->createForm(ArticleType::class, $article);
-
-        $form->handleRequest($request);
-
-        if($form->isSubmitted() && $form->isValid()) {
-
-            if($form->get('brouillon')->isClicked()){
-                $article->setState('brouillon');
-            }else{
-                $article->setState('a publier');
-            }
-
-            if($article->getId() === null){
-                $manager->persist($article);
-            }            
-            $manager->flush();
-            return $this->redirectToRoute('liste_articles');
-        }
-
-        return $this->render('default/ajout.html.twig', [
-            'form' => $form->createView()
-        ]);
-    }
-
-    /**
-     * @Route("/article/brouillon", name="brouillon_article")
-     */
-    public function brouillon(ArticleRepository $articleRepository){
-        $articles = $articleRepository->findBy([
-            'state' => 'brouillon'
-        ]);
-
-        return $this->render('default/index.html.twig', [
-            'articles' => $articles,
-            'brouillon' => true
         ]);
     }
 }
