@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    Ajouter un article
+    Ajouter/Editer un article
 {% endblock %}
 
 {% block body %}
@@ -9,8 +9,15 @@
         {{ form_start(form, {'attr': {'class': 'was-validated'}}) }}
     {% else %}
         {{ form_start(form) }}
-    {% endif %}    
-        
+    {% endif %} 
+
+        <h1>
+            {% if article.state == 'brouillon' %}
+                Modifier l'article
+            {% else %}
+                Ajouter un article
+            {% endif %}
+        </h1>
         <div class="form-group">
             {{ form_label(form.titre, null, {'label_attr': {'class': 'form-label'}}) }}
             {{ form_widget(form.titre, {'attr': {'class': 'form-control'}}) }}

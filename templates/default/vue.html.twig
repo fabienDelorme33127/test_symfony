@@ -6,12 +6,17 @@
 
 {% block body %}
 
-    <h1>{{ article.titre }}</h1>
-    {% if is_granted('ROLE_ADMIN') %}
-    <p>
-        <a href="{{ path('edition_article', { 'id':article.id }) }}">Editer</a>
-    </p>
-    {% endif %}
+    <div id="titre_brouillon">
+        <h1>
+            {% if article.state == 'brouillon' %}[Brouillon] {% endif %}{{ article.titre }}
+        </h1>
+        {% if is_granted('ROLE_ADMIN') %}
+        <p class="btn btn-info">
+            <a href="{{ path('edition_article', { 'id':article.id }) }}">Editer</a>
+        </p>
+        {% endif %}
+    </div>        
+    
     <p class="card-subtitle mb-2 text-muted">Publié le {{ article.dateCreation|date('d/m/Y') }}</p>
     <p>{{ article.contenu }}</p>
 

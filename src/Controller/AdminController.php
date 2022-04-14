@@ -48,7 +48,8 @@ class AdminController extends AbstractController
         }
 
         return $this->render('default/ajout.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'article' => $article
         ]);
     }
 
